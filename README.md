@@ -1,1 +1,1 @@
-# Chat App with Socket
+# Chat App with using Socket in C++.
