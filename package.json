@@ -1,0 +1,18 @@
+{
+  "name": "lab-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "debug-server": "cc -o tcp-server tcp-server-linux.cpp",
+    "run-server": "./tcp-server",
+    "start-server":"cc -o tcp-server tcp-server-linux.cpp && ./tcp-server",
+
+    "debug-client": "cc -o tcp-client tcp-client-linux.cpp",
+    "run-client": "./tcp-client",
+    "start-client":"cc -o tcp-client tcp-client-linux.cpp && ./tcp-client" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
