@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
+#include <iostream>
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -9,50 +11,52 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/socket.h>
+
+#include <map>
+
+#include </mnt/hdd/Desktop/C++/Datacom Project/Lab Example/cfunctions.h>
+
+using namespace std;
 
 // defines
 #define SOCKET int
+#define map std::map<char *, char *>
 
 class userInfo
 {
 public:
     char *name = NULL;
-    char *surname = NULL;
+    char *messageToWho = NULL;
     char *message = NULL;
     size_t inputSize;
-
-    // userInfo(char name[80]){
-
-    // }
 
     void describeYourself()
     {
         printf("Enter your name: ");
         if (getline(&name, &inputSize, stdin) >= 0)
-            printf("This is your string: %s\n", name);
+            printf("This is your name: %s\n", name);
         else
             printf("Error\n");
-
-        printf("\nEnter your surname: ");
-        if (getline(&surname, &inputSize, stdin) >= 0)
-            printf("This is your string: %s\n", surname);
-        else
-            printf("Error\n");
-
-        // return
     }
     void setMessage()
     {
+        printf("Enter name, you want to send message to who: ");
+        if (getline(&messageToWho, &inputSize, stdin) >= 0)
+            printf("This is your messageToWho: %s\n", messageToWho);
+        else
+            printf("Error\n");
+
         printf("Enter your message: ");
         if (getline(&message, &inputSize, stdin) >= 0)
-            printf("This is your string: %s\n", message);
+            printf("This is your message: %s\n", message);
         else
             printf("Error\n");
     }
     userInfo getUser(userInfo user)
     {
         user.name = name;
-        user.surname = surname;
+        user.messageToWho = messageToWho;
         user.message = message;
         return user;
     }
@@ -60,6 +64,7 @@ public:
 
 int main()
 {
+    person userinfo;
     userInfo myInfo;
     SOCKET socketOne;
     struct sockaddr_in server;
@@ -72,9 +77,9 @@ int main()
         printf("Could not create socket: %d", gai_strerror(errno));
     }
 
-    printf("Socket created. \n"),
+    printf("Socket created. \n");
 
-        server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server.sin_addr.s_addr = inet_addr("127.0.0.1");
     server.sin_family = AF_INET;
     server.sin_port = htons(8888);
 
@@ -86,22 +91,31 @@ int main()
     }
     printf("Connected.\n");
 
-    // describe yourself firstly
-    myInfo.describeYourself();
-    myInfo.setMessage();
-    myInfo = myInfo.getUser(myInfo);
-    puts(myInfo.message);
-    // Send some data
-    if (send(socketOne, myInfo.message, strlen(myInfo.message), 0) == -1)
+    while(1)
     {
-        puts("Send failed");
-        return 1;
-    }
-    puts("Reply received\n");
+        // Describe yourself at first
+        userinfo = getMessage(userinfo);
+        puts(userinfo.message);
 
-    // Add a null terminating character to make it a proper string before
-    server_reply[recv_size] = '\0';
-    puts(server_reply);
+        // Send some data
+        if (send(socketOne, &userinfo, sizeof(userinfo), 0) == -1)
+        {
+            puts("Send failed");
+            return 1;
+        }
+        puts("Data Send\n");
+
+        // Receive a reply from the server
+        if ((recv_size = recv(socketOne, &server_reply, 2000, 0)) == -1)
+        {
+            puts("recv failed\n");
+        }
+        puts("Reply received\n");
+
+        // Add a null terminating character to make it a proper string before
+        server_reply[recv_size] = '\0';
+        puts(server_reply);
+    }
 
     return 0;
 }
