@@ -15,7 +15,7 @@
 
 #include <map>
 
-#include </mnt/hdd/Desktop/C++/Datacom Project/Lab Example/cfunctions.h>
+#include "cfunctions.h"
 
 using namespace std;
 
