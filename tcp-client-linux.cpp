@@ -15,7 +15,8 @@
 
 #include <map>
 
-#include "cfunctions.h"
+#include "component/client/cfunctions.h"
+#include "component/bothFunctions.h"
 
 using namespace std;
 
@@ -71,6 +72,10 @@ int main()
     char *message, server_reply[2000];
     int recv_size;
 
+    serverAdresses serverAdress;
+
+    vector<userDetail> users;
+
     // Create a socket
     if ((socketOne = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
@@ -79,9 +84,9 @@ int main()
 
     printf("Socket created. \n");
 
-    server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server.sin_addr.s_addr = inet_addr(serverAdress.hostAddress);
     server.sin_family = AF_INET;
-    server.sin_port = htons(8888);
+    server.sin_port = htons(serverAdress.portAddress);
 
     // Connect to remote server
     if (connect(socketOne, (struct sockaddr *)&server, sizeof(server)) == -1)
@@ -91,8 +96,23 @@ int main()
     }
     printf("Connected.\n");
 
-    while(1)
+    while (1)
     {
+/*         // Get online user list from server
+        if ((recv_size = recv(socketOne, &users, 2000, 0)) == -1)
+        {
+            puts("recv failed\n");
+        } */
+        // puts(vectorToChar(*users));
+        // printf("user list got: %s\n", users[1].name);
+
+        // Receive a reply from the server
+/*         if ((recv_size = recv(socketOne, &server_reply, 2000, 0)) == -1)
+        {
+            puts("recv failed\n");
+        }
+        puts("Reply received\n");
+ */
         // Describe yourself at first
         userinfo = getMessage(userinfo);
         puts(userinfo.message);
