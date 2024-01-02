@@ -16,7 +16,6 @@
 #include <map>
 
 #include "component/client/cfunctions.h"
-#include "component/bothFunctions.h"
 
 using namespace std;
 
@@ -65,7 +64,7 @@ public:
 
 int main()
 {
-    person userinfo;
+    Person userinfo;
     userInfo myInfo;
     SOCKET socketOne;
     struct sockaddr_in server;
@@ -74,7 +73,9 @@ int main()
 
     serverAdresses serverAdress;
 
-    vector<userDetail> users;
+    vector<userDetail> *users = new vector<userDetail>;
+
+    char userList[512];
 
     // Create a socket
     if ((socketOne = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -96,23 +97,22 @@ int main()
     }
     printf("Connected.\n");
 
+    // Get online user list from server
+    if ((recv_size = recv(socketOne, userList, 512, 0)) == -1)
+    {
+        puts("recv failed\n");
+    }
+    printf("%s\n", userList);
     while (1)
     {
-/*         // Get online user list from server
-        if ((recv_size = recv(socketOne, &users, 2000, 0)) == -1)
-        {
-            puts("recv failed\n");
-        } */
-        // puts(vectorToChar(*users));
-        // printf("user list got: %s\n", users[1].name);
 
         // Receive a reply from the server
-/*         if ((recv_size = recv(socketOne, &server_reply, 2000, 0)) == -1)
-        {
-            puts("recv failed\n");
-        }
-        puts("Reply received\n");
- */
+        /*         if ((recv_size = recv(socketOne, &server_reply, 2000, 0)) == -1)
+                {
+                    puts("recv failed\n");
+                }
+                puts("Reply received\n");
+         */
         // Describe yourself at first
         userinfo = getMessage(userinfo);
         puts(userinfo.message);

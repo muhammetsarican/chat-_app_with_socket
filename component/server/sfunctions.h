@@ -19,12 +19,6 @@
 using namespace std;
 #define SOCKET int
 
-struct serverPerson
-{
-    char name[15] = "";
-    char messageToWho[15] = "";
-    char message[100] = "";
-};
 
 struct ThreadArgs
 {
@@ -36,39 +30,35 @@ void *handleClient(void *args)
 {
     ThreadArgs *threadArgs = (ThreadArgs *)args;
     int clientSocket = threadArgs->clientSocket;
-    struct serverPerson person;
+    struct Person person;
     int recv_len;
 
     vector<userDetail> *users = threadArgs->users;
-    printf("user list handleclient: %s\n", users->size());
 
     userDetail newUser;
 
     bool isUserExist = false;
 
+    char *userList = vectorToChar(*users);
+    // Now send other users list to client
+    if (send(clientSocket, userList, strlen(userList), 0) == -1)
+    {
+        printf("sendto() failed with error code: %d\n", gai_strerror(errno));
+    }
+
+    printf("User list sent to client\n");
+
     while (true)
     {
-/*         // Now send other users list to client
-        if (send(clientSocket, users, sizeof(users), 0) == -1)
-        {
-            printf("sendto() failed with error code: %d\n", gai_strerror(errno));
-        }
-        printf("User list send\n"); */
-
-        // Now reply the client with the same data
-        /*         if (send(clientSocket, "message received", strlen("message received"), 0) == -1)
-                {
-                    printf("sendto() failed with error code: %d\n", gai_strerror(errno));
-                }
-                printf("Message send\n"); */
-
-        // try to receive some data, this is a blocking call
+        // Getting user informations from client
         if ((recv_len = recv(clientSocket, &person, 512, 0)) == -1)
         {
             printf("recv() failed with error code: %d\n", gai_strerror(errno));
             close(clientSocket);
             pthread_exit(NULL);
         }
+
+        printf("Message received from client\n");
 
         if (isUserExist == false)
         {
@@ -77,15 +67,11 @@ void *handleClient(void *args)
 
             users->push_back(newUser);
 
-            printf("User list length: %d\n", users->size());
 
-            printf("User added, Name: %s, Socket: %d\n", newUser.name, newUser.socket);
+            printf("\nNew user added, Name: %s \nSocket: %d \n", newUser.name, newUser.socket);
 
             isUserExist = true;
         }
-
-        // print details of the client/peer and the data received
-        printf("Message: %s, To who: %s\n", person.message, person.messageToWho);
 
         // Now reply the client with the same data
         if (send(clientSocket, "message received", strlen("message received"), 0) == -1)
@@ -107,7 +93,7 @@ void changeServerPortAddress(serverAdresses *serverAddress)
 
 void createServer(struct sockaddr_in *server, serverAdresses *serverAddress)
 {
-    printf("connected on %d port\n", serverAddress->portAddress);
+    printf("Connected on %d port\n", serverAddress->portAddress);
     server->sin_family = AF_INET;
     server->sin_addr.s_addr = inet_addr(serverAddress->hostAddress);
     server->sin_port = htons(serverAddress->portAddress);

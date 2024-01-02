@@ -11,12 +11,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
-// #include <sstream>
 
 #include <pthread.h>
 
-// #include </mnt/hdd/Desktop/C++/Datacom Project/Lab Example/errhandler.h>
-// #include "bothFunctions.h"
 #include "component/server/sfunctions.h"
 
 // defines
@@ -26,11 +23,11 @@ using namespace std;
 
 int main()
 {
-    SOCKET socketObj, newSocket;
+    SOCKET serverSocket, newClientSocket;
     struct sockaddr_in server, client;
     int c, recv_len;
     char buf[512];
-    serverPerson person;
+    Person person;
     pthread_t threadId;
 
     char *userList = NULL;
@@ -41,10 +38,8 @@ int main()
 
     serverAdresses serverAddress;
 
-    // errcodes errcode;
-
     // creating socket
-    if ((socketObj = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("Could not create socket: %s\n", gai_strerror(errno));
     }
@@ -56,7 +51,7 @@ int main()
     {
         createServer(&server, &serverAddress);
         // bind
-        if (bind(socketObj, (struct sockaddr *)&server, sizeof(server)) != 0)
+        if (bind(serverSocket, (struct sockaddr *)&server, sizeof(server)) != 0)
         {
             printf("Bind connection error: %s\n", gai_strerror(errno));
             /*         errcode = CONN;
@@ -77,24 +72,24 @@ int main()
     }
 
     // Listen to incoming connections
-    listen(socketObj, 3);
+    listen(serverSocket, 3);
 
     while (true)
     {
         // Accept listening for data
         socklen_t socketLen = sizeof(struct sockaddr_in);
-        newSocket = accept(socketObj, (struct sockaddr *)&client, &socketLen);
+        newClientSocket = accept(serverSocket, (struct sockaddr *)&client, &socketLen);
 
-        if (newSocket == -1)
+        if (newClientSocket == -1)
         {
             printf("accept failed with error code: %d\n", gai_strerror(errno));
         }
 
         puts("Connection accepted");
         printf("Received packet from %s:%d\n", inet_ntoa(client.sin_addr), ntohs(client.sin_port));
-        printf("Waiting for data...\n");
+        printf("Waiting for data...\n\n");
 
-        args->clientSocket = newSocket;
+        args->clientSocket = newClientSocket;
         args->users = users;
 
         fflush(stdout);
@@ -108,13 +103,13 @@ int main()
         if (pthread_create(&threadId, NULL, handleClient, (void *)args) != 0)
         {
             printf("Thread creation failed\n");
-            close(newSocket);
+            close(newClientSocket);
         }
         printf("Thread created.\n\n");
     }
     getchar();
 
-    close(socketObj);
+    close(serverSocket);
 
     return 0;
 }

@@ -7,6 +7,13 @@
 
 using namespace std;
 
+struct Person
+{
+    char name[15] = "";
+    char messageToWho[15] = "";
+    char message[100] = "";
+};
+
 struct userDetail
 {
     char *name;
@@ -21,30 +28,37 @@ struct serverAdresses
 
 char *vectorToChar(vector<userDetail> &users)
 {
-    if (users.empty())
-    {
-        return nullptr;
-    }
-    // Convert vector to string
-    string listHeader = "----- Welcome to the Server -----\n\n# User List #\nGlobal\n";
+    string listHeader = "\n\n----------------------------------\n|----- Welcome to the Server -----\n|\n|# User List #\n| Global\n ";
 
     size_t totalLength = listHeader.length();
 
-    for (size_t i = 0; i <= users.size() - 1; ++i)
+    if (users.empty())
     {
-        totalLength += strlen(users[i].name)+1;
+        // # User List #
+        char *convertedstr = new char[totalLength + 1];
+
+        strncpy(convertedstr, listHeader.c_str(), totalLength);
+
+        return convertedstr;
     }
-    // # User List #
-    char *convertedstr = new char[totalLength + 1];
-
-    strncpy(convertedstr, listHeader.c_str(), totalLength);
-
-    size_t currentPos = listHeader.length();
-    for (size_t i = 0; i < users.size(); ++i)
+    else
     {
-        strncpy(&convertedstr[currentPos], users[i].name, strlen(users[i].name));
-        currentPos += strlen(users[i].name);
+        for (size_t i = 0; i <= users.size() - 1; ++i)
+        {
+            totalLength += strlen(users[i].name) + 1;
+        }
+        // # User List #
+        char *convertedstr = new char[totalLength + 1];
+
+        strncpy(convertedstr, listHeader.c_str(), totalLength);
+
+        size_t currentPos = listHeader.length();
+        for (size_t i = 0; i < users.size(); ++i)
+        {
+            strncpy(&convertedstr[currentPos], users[i].name, strlen(users[i].name));
+            currentPos += strlen(users[i].name);
+        }
+
+        return convertedstr;
     }
-    printf("User List: %s\n", convertedstr);
-    return convertedstr;
 }

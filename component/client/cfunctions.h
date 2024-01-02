@@ -1,18 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../bothFunctions.h"
+
 using namespace std;
 
-struct person
+Person describeYourself()
 {
-    char name[15] = "";
-    char messageToWho[15] = "";
-    char message[100] = "";
-};
-
-person describeYourself()
-{
-    person user;
+    Person user;
 
     printf("Enter your name: ");
     fgets(user.name, 15, stdin);
@@ -20,7 +15,7 @@ person describeYourself()
     return user;
 }
 
-person subOfString(person user, char comingMessage[100], int endIndex)
+Person subOfString(Person user, char comingMessage[100], int endIndex)
 {
     char messageToWho[15] = "";
     char message[100] = "";
@@ -43,7 +38,7 @@ person subOfString(person user, char comingMessage[100], int endIndex)
     return user;
 }
 
-person messageFormat(person user, char message[100])
+Person messageFormat(Person user, char message[100])
 {
     for (int i = 0; i < strlen(message); i++)
     {
@@ -59,7 +54,7 @@ person messageFormat(person user, char message[100])
     return user;
 }
 
-person getMessage(person user)
+Person getMessage(Person user)
 {
     if (strlen(user.name) == 0)
     {
