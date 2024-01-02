@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 
 #include <map>
+#include <thread>
 
 #include "component/client/cfunctions.h"
 
@@ -66,7 +67,7 @@ int main()
 {
     Person userinfo;
     userInfo myInfo;
-    SOCKET socketOne;
+    SOCKET serverSocket;
     struct sockaddr_in server;
     char *message, server_reply[2000];
     int recv_size;
@@ -78,7 +79,7 @@ int main()
     char userList[512];
 
     // Create a socket
-    if ((socketOne = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+    if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         printf("Could not create socket: %d", gai_strerror(errno));
     }
@@ -90,7 +91,7 @@ int main()
     server.sin_port = htons(serverAdress.portAddress);
 
     // Connect to remote server
-    if (connect(socketOne, (struct sockaddr *)&server, sizeof(server)) == -1)
+    if (connect(serverSocket, (struct sockaddr *)&server, sizeof(server)) == -1)
     {
         puts("connect error\n");
         return 1;
@@ -98,27 +99,22 @@ int main()
     printf("Connected.\n");
 
     // Get online user list from server
-    if ((recv_size = recv(socketOne, userList, 512, 0)) == -1)
+    if ((recv_size = recv(serverSocket, userList, 512, 0)) == -1)
     {
         puts("recv failed\n");
     }
     printf("%s\n", userList);
+
+    // New thread added to getting messages coming from server as unexpectedly
+    thread receiveThread(receiveMessages, serverSocket);
     while (1)
     {
-
-        // Receive a reply from the server
-        /*         if ((recv_size = recv(socketOne, &server_reply, 2000, 0)) == -1)
-                {
-                    puts("recv failed\n");
-                }
-                puts("Reply received\n");
-         */
         // Describe yourself at first
         userinfo = getMessage(userinfo);
         puts(userinfo.message);
 
         // Send some data
-        if (send(socketOne, &userinfo, sizeof(userinfo), 0) == -1)
+        if (send(serverSocket, &userinfo, sizeof(userinfo), 0) == -1)
         {
             puts("Send failed");
             return 1;
@@ -126,7 +122,7 @@ int main()
         puts("Data Send\n");
 
         // Receive a reply from the server
-        if ((recv_size = recv(socketOne, &server_reply, 2000, 0)) == -1)
+        if ((recv_size = recv(serverSocket, &server_reply, 2000, 0)) == -1)
         {
             puts("recv failed\n");
         }
@@ -134,7 +130,7 @@ int main()
 
         // Add a null terminating character to make it a proper string before
         server_reply[recv_size] = '\0';
-        puts(server_reply);
+        printf("%s\n", server_reply);
     }
 
     return 0;

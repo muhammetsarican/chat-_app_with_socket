@@ -74,3 +74,18 @@ Person getMessage(Person user)
 
     return user;
 }
+
+void receiveMessages(int clientSocket)
+{
+    char buffer[1024];
+    while (true)
+    {
+        if (recv(clientSocket, buffer, sizeof(buffer), 0) <= 0)
+        {
+            printf("Receive failed or connection closed");
+            break;
+        }
+        // Process received message (e.g., display or handle it)
+        printf("Server: %s\n", buffer);
+    }
+}

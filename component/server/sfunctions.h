@@ -19,12 +19,40 @@
 using namespace std;
 #define SOCKET int
 
-
 struct ThreadArgs
 {
     int clientSocket;
     vector<userDetail> *users;
 };
+
+void changeServerPortAddress(serverAdresses *serverAddress)
+{
+    serverAddress->portAddress = 8800;
+    printf("Server:port address changed to: %d\n", serverAddress->portAddress);
+}
+
+void createServer(struct sockaddr_in *server, serverAdresses *serverAddress)
+{
+    printf("Connected on %d port\n", serverAddress->portAddress);
+    server->sin_family = AF_INET;
+    server->sin_addr.s_addr = inet_addr(serverAddress->hostAddress);
+    server->sin_port = htons(serverAddress->portAddress);
+}
+
+void sendMessageToAllClients(vector<userDetail> *userList, userDetail newUser)
+{
+    string message = newUser.name;
+    message += " joined to server!";
+
+    for (auto user : *userList)
+    {
+        if (send(user.socket, message.c_str(), message.length(), 0) == -1)
+        {
+            perror("send() failed");
+            // Handle send failure if needed
+        }
+    }
+}
 
 void *handleClient(void *args)
 {
@@ -65,8 +93,9 @@ void *handleClient(void *args)
             newUser.name = person.name;
             newUser.socket = clientSocket;
 
-            users->push_back(newUser);
+            sendMessageToAllClients(users, newUser);
 
+            users->push_back(newUser);
 
             printf("\nNew user added, Name: %s \nSocket: %d \n", newUser.name, newUser.socket);
 
@@ -83,18 +112,4 @@ void *handleClient(void *args)
 
     close(clientSocket);
     pthread_exit(NULL);
-}
-
-void changeServerPortAddress(serverAdresses *serverAddress)
-{
-    serverAddress->portAddress = 8800;
-    printf("Server:port address changed to: %d\n", serverAddress->portAddress);
-}
-
-void createServer(struct sockaddr_in *server, serverAdresses *serverAddress)
-{
-    printf("Connected on %d port\n", serverAddress->portAddress);
-    server->sin_family = AF_INET;
-    server->sin_addr.s_addr = inet_addr(serverAddress->hostAddress);
-    server->sin_port = htons(serverAddress->portAddress);
 }
