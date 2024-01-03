@@ -107,10 +107,12 @@ int main()
 
     // New thread added to getting messages coming from server as unexpectedly
     thread receiveThread(receiveMessages, serverSocket);
-    while (1)
+    while (true)
     {
         // Describe yourself at first
         userinfo = getMessage(userinfo);
+        string userMessage = userinfo.message;
+
         puts(userinfo.message);
 
         // Send some data
@@ -121,16 +123,20 @@ int main()
         }
         puts("Data Send\n");
 
-        // Receive a reply from the server
-        if ((recv_size = recv(serverSocket, &server_reply, 2000, 0)) == -1)
+        if (userMessage.find("close") != -1)
         {
-            puts("recv failed\n");
+            break;
         }
-        puts("Reply received\n");
+        // // Receive a reply from the server
+        // if ((recv_size = recv(serverSocket, &server_reply, 2000, 0)) == -1)
+        // {
+        //     puts("recv failed\n");
+        // }
+        // puts("Reply received\n");
 
         // Add a null terminating character to make it a proper string before
-        server_reply[recv_size] = '\0';
-        printf("%s\n", server_reply);
+        // server_reply[recv_size] = '\0';
+        // printf("%s\n", server_reply);
     }
 
     return 0;

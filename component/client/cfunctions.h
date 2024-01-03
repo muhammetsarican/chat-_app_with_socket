@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <errno.h>
+
 #include "../bothFunctions.h"
 
 using namespace std;
@@ -49,6 +57,10 @@ Person messageFormat(Person user, char message[100])
                 user = subOfString(user, message, i);
             }
         }
+        else{
+            strcpy(user.message, "close");
+            printf("close function\n");
+        }
     }
 
     return user;
@@ -86,6 +98,7 @@ void receiveMessages(int clientSocket)
             break;
         }
         // Process received message (e.g., display or handle it)
-        printf("Server: %s\n", buffer);
+        printf("\nServer: %s\n", buffer);
+        memset(buffer, '\0', strlen(buffer));
     }
 }

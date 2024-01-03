@@ -54,6 +54,36 @@ void sendMessageToAllClients(vector<userDetail> *userList, userDetail newUser)
     }
 }
 
+bool sendMessage(vector<userDetail> *users, Person *person)
+{
+    bool isClientSocketExist = false;
+
+    string messageToWho = person->messageToWho;
+
+    for (auto user : *users)
+    {
+        string userName = user.name;
+        if (messageToWho.find("global") != -1 || userName.find(person->messageToWho) != -1)
+        {
+            isClientSocketExist = true;
+            // Now reply the client with the same data
+            if (send(user.socket, person->message, strlen(person->message), 0) == -1)
+            {
+                printf("sendto() failed with error code: %d\n", gai_strerror(errno));
+            }
+            printf("%s's message sent to %s.", person->name, person->messageToWho);
+        }
+    }
+
+    return isClientSocketExist;
+}
+
+void closeSocket(SOCKET clientSocket)
+{
+    close(clientSocket);
+    pthread_exit(NULL);
+}
+
 void *handleClient(void *args)
 {
     ThreadArgs *threadArgs = (ThreadArgs *)args;
@@ -85,8 +115,16 @@ void *handleClient(void *args)
             close(clientSocket);
             pthread_exit(NULL);
         }
+        string personMessage = person.message;
+        if (personMessage.find("close") != -1)
+        {
+            printf("CloseSocket in server\n");
+            closeSocket(clientSocket);
+            break;
+        }
 
         printf("Message received from client\n");
+        sendMessage(users, &person);
 
         if (isUserExist == false)
         {
@@ -97,19 +135,9 @@ void *handleClient(void *args)
 
             users->push_back(newUser);
 
-            printf("\nNew user added, Name: %s \nSocket: %d \n", newUser.name, newUser.socket);
+            printf("\nNew user added, Name: %s Socket: %d \n", newUser.name, newUser.socket);
 
             isUserExist = true;
         }
-
-        // Now reply the client with the same data
-        if (send(clientSocket, "message received", strlen("message received"), 0) == -1)
-        {
-            printf("sendto() failed with error code: %d\n", gai_strerror(errno));
-        }
-        printf("Message send\n");
     }
-
-    close(clientSocket);
-    pthread_exit(NULL);
 }
