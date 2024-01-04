@@ -1,19 +1,3 @@
-#include <stdio.h>
-#include <string.h>
-
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
-
-#include <pthread.h>
-
-#include <vector>
-#include <string>
-
 #include "../bothFunctions.h"
 
 using namespace std;
@@ -56,43 +40,96 @@ void sendMessageToAllClients(vector<userDetail> *userList, userDetail newUser)
 
 bool sendMessage(vector<userDetail> *users, Person *person)
 {
-    bool isClientSocketExist = false;
-
-    string messageToWho = person->messageToWho;
-
-    for (auto user : *users)
+    switch (person->type)
     {
-        string userName = user.name;
-        if (messageToWho.find("global") != -1 || userName.find(person->messageToWho) != -1)
+    case SERVER:
+    {
+        string message = person->message;
+        if (message.find("close") != -1)
         {
-            isClientSocketExist = true;
-            // Now reply the client with the same data
-            if (send(user.socket, person->message, strlen(person->message), 0) == -1)
+            string serverMessage=person->name;
+            serverMessage+=" left from server!";
+
+            for (auto user : *users)
             {
-                printf("sendto() failed with error code: %d\n", gai_strerror(errno));
+                if (send(user.socket, serverMessage.c_str(), serverMessage.length(), 0) == -1)
+                {
+                    perror("send() failed");
+                    // Handle send failure if needed
+                }
             }
-            printf("%s's message sent to %s.", person->name, person->messageToWho);
+            break;
+        }
+        else
+        {
+            string serverMessage = person->name;
+            serverMessage += " joined to server!";
+
+            for (auto user : *users)
+            {
+                if (send(user.socket, serverMessage.c_str(), serverMessage.length(), 0) == -1)
+                {
+                    perror("send() failed");
+                    // Handle send failure if needed
+                }
+            }
+            break;
         }
     }
+    case CLIENT:
+    {
+        bool isClientSocketExist = false;
 
-    return isClientSocketExist;
+        string messageToWho = person->messageToWho;
+
+        for (auto user : *users)
+        {
+            string userName = user.name;
+            if (messageToWho.find("global") != -1 || userName.find(person->messageToWho) != -1)
+            {
+                isClientSocketExist = true;
+                // Now reply the client with the same data
+                if (send(user.socket, person->message, strlen(person->message), 0) == -1)
+                {
+                    printf("sendto() failed with error code: %d\n", gai_strerror(errno));
+                }
+                printf("%s's message sent to %s.", person->name, person->messageToWho);
+            }
+        }
+
+        return isClientSocketExist;
+        break;
+    }
+    default:
+        break;
+    }
+    return false;
 }
 
-void closeSocket(SOCKET clientSocket)
+
+void dropUserFromList(vector<userDetail> *users)
+{
+    printf("user dropped from list successfully.");
+}
+
+void closeSocket(vector<userDetail> *users, SOCKET clientSocket, Person *person)
 {
     close(clientSocket);
+    sendMessage(users, person);
+    dropUserFromList(users);
     pthread_exit(NULL);
 }
 
 void *handleClient(void *args)
 {
     ThreadArgs *threadArgs = (ThreadArgs *)args;
+
     int clientSocket = threadArgs->clientSocket;
-    struct Person person;
     int recv_len;
 
     vector<userDetail> *users = threadArgs->users;
 
+    Person person;
     userDetail newUser;
 
     bool isUserExist = false;
@@ -119,12 +156,12 @@ void *handleClient(void *args)
         if (personMessage.find("close") != -1)
         {
             printf("CloseSocket in server\n");
-            closeSocket(clientSocket);
-            break;
+            person.type=SERVER;
+            closeSocket(users, clientSocket, &person);
         }
 
         printf("Message received from client\n");
-        sendMessage(users, &person);
+        bool isMessageSended = sendMessage(users, &person);
 
         if (isUserExist == false)
         {

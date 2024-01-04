@@ -1,4 +1,4 @@
-#include <stdio.h>
+/* #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include <pthread.h>
-
+ */
 #include "component/server/sfunctions.h"
 
 // defines
@@ -58,7 +58,7 @@ int main()
                     printf("%s", errorHandler(errcode));*/
             if (isPortChanged == false)
             {
-                changeServerPortAddress(&serverAddress);
+                // changeServerPortAddress(&serverAddress);
                 isPortChanged = true;
                 continue;
             }

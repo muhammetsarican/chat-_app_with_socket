@@ -1,4 +1,4 @@
-#include <stdio.h>
+/* #include <stdio.h>
 #include <string.h>
 
 #include <sys/types.h>
@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
-#include <errno.h>
+#include <errno.h> */
 
 #include "../bothFunctions.h"
 
@@ -48,6 +48,8 @@ Person subOfString(Person user, char comingMessage[100], int endIndex)
 
 Person messageFormat(Person user, char message[100])
 {
+    string userMessage = message;
+
     for (int i = 0; i < strlen(message); i++)
     {
         if (message[i] == '-')
@@ -57,10 +59,11 @@ Person messageFormat(Person user, char message[100])
                 user = subOfString(user, message, i);
             }
         }
-        else{
-            strcpy(user.message, "close");
-            printf("close function\n");
-        }
+    }
+    if (userMessage.find("close") != -1)
+    {
+        strcpy(user.message, "close");
+        printf("close function\n");
     }
 
     return user;

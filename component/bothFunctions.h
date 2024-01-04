@@ -1,5 +1,21 @@
+/* #include <stdio.h>
+#include <string.h>
+#include <vector>
+#include <string> */
+
 #include <stdio.h>
 #include <string.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <errno.h>
+
+#include <pthread.h>
+
 #include <vector>
 #include <string>
 
@@ -7,11 +23,18 @@
 
 using namespace std;
 
+enum connType
+{
+    SERVER,
+    CLIENT
+};
+
 struct Person
 {
     char name[15] = "";
     char messageToWho[15] = "";
     char message[100] = "";
+    connType type=CLIENT;
 };
 
 struct userDetail
