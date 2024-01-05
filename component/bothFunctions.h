@@ -18,23 +18,45 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 #define SOCKET int
 
 using namespace std;
 
+// Enums
 enum connType
 {
     SERVER,
     CLIENT
 };
 
+enum errCodes
+{
+    CONN,
+    MESG,
+    MERR,
+    GONE
+};
+
+/* map<errCodes, string> Err={
+    CONN:"CONN"
+} */
+
+// Structs
 struct Person
 {
     char name[15] = "";
     char messageToWho[15] = "";
     char message[100] = "";
-    connType type=CLIENT;
+    connType type = CLIENT;
+};
+
+struct Msg
+{
+    errCodes err;
+    Person person;
+    connType type;
 };
 
 struct userDetail
@@ -49,6 +71,7 @@ struct serverAdresses
     int portAddress = 8888;
 };
 
+// Functions
 char *vectorToChar(vector<userDetail> &users)
 {
     string listHeader = "\n\n----------------------------------\n|----- Welcome to the Server -----\n|\n|# User List #\n| Global\n ";
@@ -83,5 +106,155 @@ char *vectorToChar(vector<userDetail> &users)
         }
 
         return convertedstr;
+    }
+}
+
+string getErrCode(errCodes errcode)
+{
+    switch (errcode)
+    {
+    case CONN:
+    { /* code */
+        return "CONN|";
+    }
+    case MESG:
+    { /* code */
+        return "MESG|";
+    }
+    case MERR:
+    { /* code */
+        return "MERR|";
+    }
+    case GONE:
+    { /* code */
+        return "GONE|";
+    }
+
+    default:
+        break;
+    }
+    return "MERR";
+}
+
+string getConnType(connType conntype)
+{
+    switch (conntype)
+    {
+    case SERVER:
+    { /* code */
+        return "SERVER";
+    }
+    case CLIENT:
+    { /* code */
+        return "CLIENT";
+    }
+
+    default:
+        break;
+    }
+    return "ERR";
+}
+
+string generateMsg(Msg msg)
+{
+    string message = getErrCode(msg.err);
+
+    message += (string)msg.person.name + "|" + (string)msg.person.messageToWho + "|" + (string)msg.person.message + "|";
+
+    message += getConnType(msg.type);
+
+    printf("%s\n", message);
+    return message;
+}
+
+errCodes encodeErrCode(string errcode)
+{
+    if (errcode.c_str() == "CONN")
+    { /* code */
+        return CONN;
+    }
+    if (errcode.c_str() == "MESG")
+    { /* code */
+        return MESG;
+    }
+    if (errcode.c_str() == "MERR")
+    { /* code */
+        return MERR;
+    }
+    if (errcode.c_str() == "GONE")
+    { /* code */
+        return GONE;
+    }
+    return MERR;
+}
+
+connType encodeConnType(string conntype)
+{
+    if (conntype.c_str() == "SERVER")
+    { /* code */
+        return SERVER;
+    }
+    if (conntype.c_str() == "CLIENT")
+    { /* code */
+        return CLIENT;
+    }
+    return CLIENT;
+}
+
+void assignPartsToMsg(Msg *msg, string param, int paramCount)
+{
+    switch (paramCount)
+    {
+    case 1:
+    { /* code */
+        msg->err = encodeErrCode(param);
+        break;
+    }
+    case 2:
+    { /* code */
+        strcpy(msg->person.name, param.c_str());
+        break;
+    }
+    case 3:
+    { /* code */
+        strcpy(msg->person.messageToWho, param.c_str());
+        break;
+    }
+    case 4:
+    { /* code */
+        strcpy(msg->person.message, param.c_str());
+        break;
+    }
+    case 5:
+    { /* code */
+        msg->type = encodeConnType(param);
+        break;
+    }
+
+    default:
+        break;
+    }
+}
+
+void encodeMsg(Msg *msg, string message)
+{
+    size_t nextIndex = 0;
+    int foundParam = 0;
+
+    string partOfMessage;
+    while (nextIndex < message.length())
+    {
+        int index = message.find("|", nextIndex);
+        if (index == -1)
+        {
+            partOfMessage = message.substr(nextIndex, index - nextIndex);
+            assignPartsToMsg(msg, partOfMessage, 5);
+            break;
+        }
+        foundParam += 1;
+        partOfMessage = message.substr(nextIndex, index - nextIndex);
+        assignPartsToMsg(msg, partOfMessage, foundParam);
+
+        nextIndex = index + 1;
     }
 }

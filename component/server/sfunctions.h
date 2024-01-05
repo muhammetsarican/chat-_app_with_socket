@@ -44,60 +44,83 @@ bool sendMessage(vector<userDetail> *users, Person *person)
     {
     case SERVER:
     {
+        Person newPerson = *person;
         string message = person->message;
         if (message.find("close") != -1)
         {
-            string serverMessage=person->name;
-            serverMessage+=" left from server!";
+            strcpy(newPerson.message, "left from server!");
 
             for (auto user : *users)
             {
-                if (send(user.socket, serverMessage.c_str(), serverMessage.length(), 0) == -1)
+                if (send(user.socket, &newPerson, sizeof(newPerson), 0) == -1)
                 {
                     perror("send() failed");
                     // Handle send failure if needed
                 }
             }
-            break;
+            // break;
+            /*             string serverMessage=person->name;
+                        serverMessage+=" left from server!";
+
+                        for (auto user : *users)
+                        {
+                            if (send(user.socket, &*person, serverMessage.length(), 0) == -1)
+                            {
+                                perror("send() failed");
+                                // Handle send failure if needed
+                            }
+                        }
+                        break; */
         }
         else
         {
-            string serverMessage = person->name;
-            serverMessage += " joined to server!";
+            strcpy(person->message, "joined to server!");
 
             for (auto user : *users)
             {
-                if (send(user.socket, serverMessage.c_str(), serverMessage.length(), 0) == -1)
+                if (send(user.socket, &person, sizeof(person), 0) == -1)
                 {
                     perror("send() failed");
                     // Handle send failure if needed
                 }
             }
-            break;
+            /*             string serverMessage = person->name;
+                        serverMessage += " joined to server!";
+
+                        for (auto user : *users)
+                        {
+                            if (send(user.socket, serverMessage.c_str(), serverMessage.length(), 0) == -1)
+                            {
+                                perror("send() failed");
+                                // Handle send failure if needed
+                            }
+                        } */
         }
+        break;
     }
     case CLIENT:
     {
-        bool isClientSocketExist = false;
+        printf("client\n");
+        /*         bool isClientSocketExist = false;
 
-        string messageToWho = person->messageToWho;
+                string messageToWho = person->messageToWho;
 
-        for (auto user : *users)
-        {
-            string userName = user.name;
-            if (messageToWho.find("global") != -1 || userName.find(person->messageToWho) != -1)
-            {
-                isClientSocketExist = true;
-                // Now reply the client with the same data
-                if (send(user.socket, person->message, strlen(person->message), 0) == -1)
+                for (auto user : *users)
                 {
-                    printf("sendto() failed with error code: %d\n", gai_strerror(errno));
+                    string userName = user.name;
+                    if (messageToWho.find("global") != -1 || userName.find(person->messageToWho) != -1)
+                    {
+                        isClientSocketExist = true;
+                        // Now reply the client with the same data
+                        if (send(user.socket, person->message, strlen(person->message), 0) == -1)
+                        {
+                            printf("sendto() failed with error code: %d\n", gai_strerror(errno));
+                        }
+                        printf("%s's message sent to %s.", person->name, person->messageToWho);
+                    }
                 }
-                printf("%s's message sent to %s.", person->name, person->messageToWho);
-            }
-        }
 
-        return isClientSocketExist;
+                return isClientSocketExist; */
         break;
     }
     default:
@@ -105,7 +128,6 @@ bool sendMessage(vector<userDetail> *users, Person *person)
     }
     return false;
 }
-
 
 void dropUserFromList(vector<userDetail> *users)
 {
@@ -126,11 +148,14 @@ void *handleClient(void *args)
 
     int clientSocket = threadArgs->clientSocket;
     int recv_len;
+    char buffer[512];
+    string comingMessage;
 
     vector<userDetail> *users = threadArgs->users;
 
     Person person;
     userDetail newUser;
+    Msg msg;
 
     bool isUserExist = false;
 
@@ -146,35 +171,44 @@ void *handleClient(void *args)
     while (true)
     {
         // Getting user informations from client
-        if ((recv_len = recv(clientSocket, &person, 512, 0)) == -1)
+        if ((recv_len = recv(clientSocket, buffer, 512, 0)) == -1)
         {
             printf("recv() failed with error code: %d\n", gai_strerror(errno));
             close(clientSocket);
             pthread_exit(NULL);
         }
-        string personMessage = person.message;
-        if (personMessage.find("close") != -1)
-        {
-            printf("CloseSocket in server\n");
-            person.type=SERVER;
-            closeSocket(users, clientSocket, &person);
-        }
+        printf("%s\n", buffer);
 
-        printf("Message received from client\n");
-        bool isMessageSended = sendMessage(users, &person);
+        encodeMsg(&msg, buffer);
 
-        if (isUserExist == false)
-        {
-            newUser.name = person.name;
-            newUser.socket = clientSocket;
+        printf("coming message: %s\n", msg.person.message);
+        printf("coming message: %s\n", msg.person.name);
+        printf("coming message: %s\n", msg.person.messageToWho);
 
-            sendMessageToAllClients(users, newUser);
+        memset(buffer, '\0', strlen(buffer));
+        /*         string personMessage = person.message;
+                if (personMessage.find("close") != -1)
+                {
+                    printf("CloseSocket in server\n");
+                    person.type = SERVER;
+                    closeSocket(users, clientSocket, &person);
+                } */
 
-            users->push_back(newUser);
+        /*         printf("Message received from client\n");
+                bool isMessageSended = sendMessage(users, &person);
 
-            printf("\nNew user added, Name: %s Socket: %d \n", newUser.name, newUser.socket);
+                if (isUserExist == false)
+                {
+                    newUser.name = person.name;
+                    newUser.socket = clientSocket;
 
-            isUserExist = true;
-        }
+                    sendMessageToAllClients(users, newUser);
+
+                    users->push_back(newUser);
+
+                    printf("\nNew user added, Name: %s Socket: %d \n", newUser.name, newUser.socket);
+
+                    isUserExist = true;
+                } */
     }
 }

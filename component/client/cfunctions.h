@@ -13,17 +13,13 @@
 
 using namespace std;
 
-Person describeYourself()
+void describeYourself(Person *user)
 {
-    Person user;
-
     printf("Enter your name: ");
-    fgets(user.name, 15, stdin);
-
-    return user;
+    fgets(user->name, 15, stdin);
 }
 
-Person subOfString(Person user, char comingMessage[100], int endIndex)
+void subOfString(Person *user, char comingMessage[100], int endIndex)
 {
     char messageToWho[15] = "";
     char message[100] = "";
@@ -40,13 +36,11 @@ Person subOfString(Person user, char comingMessage[100], int endIndex)
         }
     }
 
-    strcpy(user.messageToWho, messageToWho);
-    strcpy(user.message, message);
-
-    return user;
+    strcpy(user->messageToWho, messageToWho);
+    strcpy(user->message, message);
 }
 
-Person messageFormat(Person user, char message[100])
+void messageFormat(Person *user, char message[100])
 {
     string userMessage = message;
 
@@ -56,24 +50,22 @@ Person messageFormat(Person user, char message[100])
         {
             if (message[i + 1] == '>')
             {
-                user = subOfString(user, message, i);
+                subOfString(user, message, i);
             }
         }
     }
     if (userMessage.find("close") != -1)
     {
-        strcpy(user.message, "close");
+        strcpy(user->message, "close");
         printf("close function\n");
     }
-
-    return user;
 }
 
-Person getMessage(Person user)
+Person getMessage(Person *user)
 {
-    if (strlen(user.name) == 0)
+    if (strlen(user->name) == 0)
     {
-        user = describeYourself();
+        describeYourself(user);
     }
     else
     {
@@ -85,14 +77,26 @@ Person getMessage(Person user)
     printf("Please enter your message (Format: friend_name->message): ");
     fgets(message, 100, stdin);
 
-    user = messageFormat(user, message);
+    messageFormat(user, message);
 
-    return user;
+    return *user;
 }
 
 void receiveMessages(int clientSocket)
 {
-    char buffer[1024];
+    Person person;
+    while (true)
+    {
+        if (recv(clientSocket, &person, 512, 0) <= 0)
+        {
+            printf("Receive failed or connection closed");
+            break;
+        }
+        // Process received message (e.g., display or handle it)
+        printf("\nServer: %s\n", person.message);
+        memset(person.message, '\0', strlen(person.message));
+    }
+/*     char buffer[1024];
     while (true)
     {
         if (recv(clientSocket, buffer, sizeof(buffer), 0) <= 0)
@@ -103,5 +107,5 @@ void receiveMessages(int clientSocket)
         // Process received message (e.g., display or handle it)
         printf("\nServer: %s\n", buffer);
         memset(buffer, '\0', strlen(buffer));
-    }
+    } */
 }

@@ -76,6 +76,8 @@ int main()
 
     vector<userDetail> *users = new vector<userDetail>;
 
+    Msg clientMessage;
+
     char userList[512];
 
     // Create a socket
@@ -110,13 +112,15 @@ int main()
     while (true)
     {
         // Describe yourself at first
-        userinfo = getMessage(userinfo);
-        string userMessage = userinfo.message;
+        clientMessage.person = getMessage(&userinfo);
+        clientMessage.err=MESG;
+        clientMessage.type=CLIENT;
 
-        puts(userinfo.message);
+        string userMessage=clientMessage.person.message;
+        string message=generateMsg(clientMessage);
 
         // Send some data
-        if (send(serverSocket, &userinfo, sizeof(userinfo), 0) == -1)
+        if (send(serverSocket, message.c_str(), message.length(), 0) == -1)
         {
             puts("Send failed");
             return 1;
