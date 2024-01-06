@@ -39,10 +39,6 @@ enum errCodes
     GONE
 };
 
-/* map<errCodes, string> Err={
-    CONN:"CONN"
-} */
-
 // Structs
 struct Person
 {
@@ -59,7 +55,7 @@ struct Msg
     connType type;
 };
 
-struct userDetail
+struct UserDetail
 {
     char *name;
     SOCKET socket;
@@ -72,7 +68,7 @@ struct serverAdresses
 };
 
 // Functions
-char *vectorToChar(vector<userDetail> &users)
+char *vectorToChar(vector<UserDetail> &users)
 {
     string listHeader = "\n\n----------------------------------\n|----- Welcome to the Server -----\n|\n|# User List #\n| Global\n ";
 
@@ -169,20 +165,25 @@ string generateMsg(Msg msg)
 
 errCodes encodeErrCode(string errcode)
 {
-    if (errcode.c_str() == "CONN")
+    printf("you are in encode err function\n");
+    if (errcode.find("CONN") != -1)
     { /* code */
+        printf("we assign your parameter as CONN");
         return CONN;
     }
-    if (errcode.c_str() == "MESG")
+    if (errcode.find("MESG") != -1)
     { /* code */
+        printf("we assign your parameter as MESG");
         return MESG;
     }
-    if (errcode.c_str() == "MERR")
+    if (errcode.find("MERR") != -1)
     { /* code */
+        printf("we assign your parameter as MERR");
         return MERR;
     }
-    if (errcode.c_str() == "GONE")
+    if (errcode.find("GONE") != -1)
     { /* code */
+        printf("we assign your parameter as GONE");
         return GONE;
     }
     return MERR;
@@ -190,11 +191,11 @@ errCodes encodeErrCode(string errcode)
 
 connType encodeConnType(string conntype)
 {
-    if (conntype.c_str() == "SERVER")
+    if (conntype.find("SERVER") != -1)
     { /* code */
         return SERVER;
     }
-    if (conntype.c_str() == "CLIENT")
+    if (conntype.find("CLIENT") != -1)
     { /* code */
         return CLIENT;
     }
@@ -203,6 +204,7 @@ connType encodeConnType(string conntype)
 
 void assignPartsToMsg(Msg *msg, string param, int paramCount)
 {
+    printf("Parameter: %s\n", param.c_str());
     switch (paramCount)
     {
     case 1:
@@ -238,12 +240,14 @@ void assignPartsToMsg(Msg *msg, string param, int paramCount)
 
 void encodeMsg(Msg *msg, string message)
 {
+    printf("You are in encode msg function\n");
     size_t nextIndex = 0;
     int foundParam = 0;
 
     string partOfMessage;
     while (nextIndex < message.length())
     {
+        printf("part count: %d\n", foundParam);
         int index = message.find("|", nextIndex);
         if (index == -1)
         {

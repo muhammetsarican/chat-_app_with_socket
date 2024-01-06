@@ -32,7 +32,7 @@ int main()
 
     char *userList = NULL;
 
-    vector<userDetail> *users = new vector<userDetail>;
+    vector<UserDetail> *users = new vector<UserDetail>;
 
     ThreadArgs *args = new ThreadArgs;
 

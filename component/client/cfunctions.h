@@ -61,14 +61,16 @@ void messageFormat(Person *user, char message[100])
     }
 }
 
-Person getMessage(Person *user)
+Person getMessage(Msg *msg, Person *user)
 {
     if (strlen(user->name) == 0)
     {
+        msg->err=CONN;
         describeYourself(user);
     }
     else
     {
+        msg->err=MESG;
         printf("You introduced yourself successfully.\n");
     }
 
@@ -84,17 +86,17 @@ Person getMessage(Person *user)
 
 void receiveMessages(int clientSocket)
 {
-    Person person;
+    char buffer[512];                                                                                                                                          
     while (true)
     {
-        if (recv(clientSocket, &person, 512, 0) <= 0)
+        if (recv(clientSocket, buffer, 512, 0) <= 0)
         {
             printf("Receive failed or connection closed");
             break;
         }
         // Process received message (e.g., display or handle it)
-        printf("\nServer: %s\n", person.message);
-        memset(person.message, '\0', strlen(person.message));
+        printf("\nServer: %s\n", buffer);
+        memset(buffer, '\0', strlen(buffer));
     }
 /*     char buffer[1024];
     while (true)

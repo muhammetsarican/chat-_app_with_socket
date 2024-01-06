@@ -74,7 +74,7 @@ int main()
 
     serverAdresses serverAdress;
 
-    vector<userDetail> *users = new vector<userDetail>;
+    vector<UserDetail> *users = new vector<UserDetail>;
 
     Msg clientMessage;
 
@@ -112,12 +112,15 @@ int main()
     while (true)
     {
         // Describe yourself at first
-        clientMessage.person = getMessage(&userinfo);
-        clientMessage.err=MESG;
-        clientMessage.type=CLIENT;
+        clientMessage.person = getMessage(&clientMessage, &userinfo);
+        clientMessage.type = CLIENT;
 
-        string userMessage=clientMessage.person.message;
-        string message=generateMsg(clientMessage);
+        string userMessage = clientMessage.person.message;
+        if (userMessage.find("close") != -1)
+        {
+            clientMessage.err=GONE;
+        }
+        string message = generateMsg(clientMessage);
 
         // Send some data
         if (send(serverSocket, message.c_str(), message.length(), 0) == -1)
@@ -126,11 +129,12 @@ int main()
             return 1;
         }
         puts("Data Send\n");
-
+        
         if (userMessage.find("close") != -1)
         {
             break;
         }
+
         // // Receive a reply from the server
         // if ((recv_size = recv(serverSocket, &server_reply, 2000, 0)) == -1)
         // {
