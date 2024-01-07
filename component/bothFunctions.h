@@ -45,7 +45,6 @@ struct Person
     char name[15] = "";
     char messageToWho[15] = "";
     char message[100] = "";
-    connType type = CLIENT;
 };
 
 struct Msg
@@ -57,7 +56,8 @@ struct Msg
 
 struct UserDetail
 {
-    char *name;
+    // char *name;
+    char name[15] = "";
     SOCKET socket;
 };
 
@@ -70,7 +70,7 @@ struct serverAdresses
 // Functions
 char *vectorToChar(vector<UserDetail> &users)
 {
-    string listHeader = "\n\n----------------------------------\n|----- Welcome to the Server -----\n|\n|# User List #\n| Global\n ";
+    string listHeader = "\n\n----------------------------------\n|----- Welcome to the Server -----\n|\n|# User List #\n| Global\n";
 
     size_t totalLength = listHeader.length();
 
@@ -159,7 +159,7 @@ string generateMsg(Msg msg)
 
     message += getConnType(msg.type);
 
-    printf("%s\n", message);
+    printf("generated message: %s\n", message.c_str());
     return message;
 }
 
@@ -168,22 +168,22 @@ errCodes encodeErrCode(string errcode)
     printf("you are in encode err function\n");
     if (errcode.find("CONN") != -1)
     { /* code */
-        printf("we assign your parameter as CONN");
+        printf("we assign your parameter as CONN\n");
         return CONN;
     }
     if (errcode.find("MESG") != -1)
     { /* code */
-        printf("we assign your parameter as MESG");
+        printf("we assign your parameter as MESG\n");
         return MESG;
     }
     if (errcode.find("MERR") != -1)
     { /* code */
-        printf("we assign your parameter as MERR");
+        printf("we assign your parameter as MERR\n");
         return MERR;
     }
     if (errcode.find("GONE") != -1)
     { /* code */
-        printf("we assign your parameter as GONE");
+        printf("we assign your parameter as GONE\n");
         return GONE;
     }
     return MERR;
@@ -247,7 +247,6 @@ void encodeMsg(Msg *msg, string message)
     string partOfMessage;
     while (nextIndex < message.length())
     {
-        printf("part count: %d\n", foundParam);
         int index = message.find("|", nextIndex);
         if (index == -1)
         {

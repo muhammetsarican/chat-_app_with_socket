@@ -32,7 +32,7 @@ int main()
 
     char *userList = NULL;
 
-    vector<UserDetail> *users = new vector<UserDetail>;
+    vector<UserDetail> users;
 
     ThreadArgs *args = new ThreadArgs;
 
@@ -90,7 +90,7 @@ int main()
         printf("Waiting for data...\n\n");
 
         args->clientSocket = newClientSocket;
-        args->users = users;
+        args->users = &users;
 
         fflush(stdout);
 
