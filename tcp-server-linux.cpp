@@ -1,25 +1,4 @@
-/* #include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <errno.h>
-
-#include <string.h>
-#include <string>
-#include <vector>
-#include <iostream>
-
-#include <pthread.h>
- */
 #include "component/server/sfunctions.h"
-
-// defines
-#define SOCKET int
-
-using namespace std;
 
 int main()
 {
@@ -100,7 +79,7 @@ int main()
         memset(person.message, '\0', strlen(person.message));
 
         // multi thread using for chatting with client
-        if (pthread_create(&threadId, NULL, handleClient, (void *)args) != 0)
+        if (pthread_create(&threadId, NULL, ServiceClient, (void *)args) != 0)
         {
             printf("Thread creation failed\n");
             close(newClientSocket);

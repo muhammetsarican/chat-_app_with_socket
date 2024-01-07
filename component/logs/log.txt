@@ -1,0 +1,40 @@
+Sun Jan  7 22:10:54 2024 code:CONN| connection type:CLIENT person informations: name:fatma receiver:global message:message to global
+Sun Jan  7 22:11:43 2024 code:CONN| connection type:CLIENT person informations: name:aali  receiver:muhammet message:hello muhammet
+Sun Jan  7 22:16:50 2024 code:CONN| connection type:CLIENT person informations: name:muhammetsaricanglobal receiver:global message:hello everyone
+Sun Jan  7 22:18:39 2024 code:CONN| connection type:CLIENT person informations: name:fatma receiver:global message:mesage to global
+Sun Jan  7 22:19:51 2024 code:CONN| connection type:CLIENT person informations: name:ali receiver:fatma message:message to fatma
+Sun Jan  7 22:21:01 2024 code:CONN| connection type:CLIENT person informations: name:muhammet receiver:global message:message to global
+Sun Jan  7 22:22:49 2024 code:CONN| connection type:CLIENT person informations: name:fatma receiver:global message:message to global from fatma
+Sun Jan  7 22:23:32 2024 code:CONN| connection type:CLIENT person informations: name:ali receiver:muhammet message:hello muhammet
+Sun Jan  7 22:23:44 2024 code:MESG| connection type:CLIENT person informations: name:ali receiver:osman message:hello osman
+Sun Jan  7 22:23:44 2024 code:MERR| connection type:SERVER person informations: name:SERVER receiver:ali message:user not found!
+Sun Jan  7 22:35:15 2024 code:CONN| connection type:CLIENT person informations: name:muhammet receiver:global message:message to global
+Sun Jan  7 22:35:38 2024 code:CONN| connection type:CLIENT person informations: name:fatma receiver:global message:message to global from fatma
+Sun Jan  7 22:35:53 2024 code:CONN| connection type:CLIENT person informations: name:ali receiver:global message:its ali
+Sun Jan  7 22:36:01 2024 code:MESG| connection type:CLIENT person informations: name:ali receiver:muhammet message:hello muhammet
+Sun Jan  7 22:36:15 2024 code:MESG| connection type:CLIENT person informations: name:ali receiver:fatma message:hello my name is ali
+Sun Jan  7 22:36:33 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:ali message:hello ali nice to meet you
+Sun Jan  7 22:37:05 2024 code:MESG| connection type:CLIENT person informations: name:muhammet receiver:fatma message:hello fatma my name is muhammet
+Sun Jan  7 22:37:22 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:muhammet message:hello muhammet nice to meet you
+Sun Jan  7 22:37:45 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:global message:I am leaving guys take care yourself
+Sun Jan  7 22:38:30 2024 code:MESG| connection type:CLIENT person informations: name:muhammet receiver:global message:okay fatma if dont you here, I wont
+Sun Jan  7 22:55:19 2024 code:CONN| connection type:CLIENT person informations: name:muhammet receiver:global message:message to global
+Sun Jan  7 22:55:19 2024 code:CONN| connection type:CLIENT person informations: name:muhammet receiver:global message:message to global
+Sun Jan  7 22:55:56 2024 code:CONN| connection type:CLIENT person informations: name:fatma receiver:global message:hello everyone
+Sun Jan  7 22:55:56 2024 code:CONN| connection type:CLIENT person informations: name:fatma receiver:global message:hello everyone
+Sun Jan  7 22:56:13 2024 code:CONN| connection type:CLIENT person informations: name:ali receiver:global message:hello
+Sun Jan  7 22:56:13 2024 code:CONN| connection type:CLIENT person informations: name:ali receiver:global message:hello
+Sun Jan  7 22:56:24 2024 code:MESG| connection type:CLIENT person informations: name:ali receiver:fatma message:hello fatma
+Sun Jan  7 22:56:33 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:ali message:hi ali
+Sun Jan  7 22:56:51 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:muhammet message:hello muhammet
+Sun Jan  7 22:57:13 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:global message:I am leaving server
+Sun Jan  7 22:57:28 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:globala message:can I quit
+Sun Jan  7 22:57:47 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:osman message:can I quit osman?
+Sun Jan  7 22:57:47 2024 code:MERR| connection type:SERVER person informations: name:SERVER receiver:ali message:user not found!
+Sun Jan  7 22:58:25 2024 code:MESG| connection type:CLIENT person informations: name:muhammet receiver:global message:ok I am quitting too
+Sun Jan  7 22:58:31 2024 code:GONE| connection type:CLIENT person informations: name:muhammet receiver:global message:close
+Sun Jan  7 22:58:45 2024 code:MESG| connection type:CLIENT person informations: name:fatma receiver:global message:good bye ali
+Sun Jan  7 22:59:19 2024 code:MESG| connection type:CLIENT person informations: name:ali receiver:fatma message:goodbye I'll miss you
+Sun Jan  7 22:59:47 2024 code:MESG| connection type:CLIENT person informations: name:ali receiver:global message:I am leaving too
+Sun Jan  7 22:59:49 2024 code:GONE| connection type:CLIENT person informations: name:ali receiver:global message:close
+Sun Jan  7 22:59:55 2024 code:GONE| connection type:CLIENT person informations: name:fatma receiver:global message:close

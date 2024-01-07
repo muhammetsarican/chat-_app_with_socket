@@ -1,8 +1,3 @@
-/* #include <stdio.h>
-#include <string.h>
-#include <vector>
-#include <string> */
-
 #include <stdio.h>
 #include <string.h>
 
@@ -20,6 +15,12 @@
 #include <string>
 #include <map>
 
+#include <stdlib.h>
+#include <iostream>
+
+#include <thread>
+
+// defines
 #define SOCKET int
 
 using namespace std;
@@ -97,8 +98,10 @@ char *vectorToChar(vector<UserDetail> &users)
         size_t currentPos = listHeader.length();
         for (size_t i = 0; i < users.size(); ++i)
         {
-            strncpy(&convertedstr[currentPos], users[i].name, strlen(users[i].name));
-            currentPos += strlen(users[i].name);
+            string username=users[i].name;
+            username+="\n";
+            strncpy(&convertedstr[currentPos], username.c_str(), username.length());
+            currentPos += username.length();
         }
 
         return convertedstr;
@@ -159,31 +162,31 @@ string generateMsg(Msg msg)
 
     message += getConnType(msg.type);
 
-    printf("generated message: %s\n", message.c_str());
+    // printf("generated message: %s\n", message.c_str());
     return message;
 }
 
 errCodes encodeErrCode(string errcode)
 {
-    printf("you are in encode err function\n");
+    // printf("you are in encode err function\n");
     if (errcode.find("CONN") != -1)
     { /* code */
-        printf("we assign your parameter as CONN\n");
+        // printf("we assign your parameter as CONN\n");
         return CONN;
     }
     if (errcode.find("MESG") != -1)
     { /* code */
-        printf("we assign your parameter as MESG\n");
+        // printf("we assign your parameter as MESG\n");
         return MESG;
     }
     if (errcode.find("MERR") != -1)
     { /* code */
-        printf("we assign your parameter as MERR\n");
+        // printf("we assign your parameter as MERR\n");
         return MERR;
     }
     if (errcode.find("GONE") != -1)
     { /* code */
-        printf("we assign your parameter as GONE\n");
+        // printf("we assign your parameter as GONE\n");
         return GONE;
     }
     return MERR;
@@ -204,7 +207,7 @@ connType encodeConnType(string conntype)
 
 void assignPartsToMsg(Msg *msg, string param, int paramCount)
 {
-    printf("Parameter: %s\n", param.c_str());
+    // printf("Parameter: %s\n", param.c_str());
     switch (paramCount)
     {
     case 1:
@@ -240,7 +243,7 @@ void assignPartsToMsg(Msg *msg, string param, int paramCount)
 
 void encodeMsg(Msg *msg, string message)
 {
-    printf("You are in encode msg function\n");
+    // printf("You are in encode msg function\n");
     size_t nextIndex = 0;
     int foundParam = 0;
 
@@ -260,4 +263,9 @@ void encodeMsg(Msg *msg, string message)
 
         nextIndex = index + 1;
     }
+}
+
+string cutSpaces(string word){
+    word.pop_back();
+    return word;
 }
